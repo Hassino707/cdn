@@ -154,18 +154,20 @@
 
    <script>
         // ============================================================
-        // CONFIGURATION: 4 Unique CPM Traffic Destination Handles
+        // CONFIGURATION: Unified Traffic Paths
         // ============================================================
-        // Use different sources or networks to keep your eCPM high per hit
-        const CPM_FORWARD_MAIN = "https://mittengulped.com/zbaqp4kht1?key=c0b3695107a19260d31e0b2a8d4096e5&utm_source=us_skim&utm_medium=forward_main";
-        const CPM_FORWARD_SUB  = "https://mittengulped.com/zbaqp4kht1?key=c0b3695107a19260d31e0b2a8d4096e5&utm_source=us_skim&utm_medium=forward_sub";
-        const CPM_BACK_TRAP_1  = "https://mittengulped.com/zbaqp4kht1?key=c0b3695107a19260d31e0b2a8d4096e5&utm_source=us_skim&utm_medium=back_one";
-        const CPM_BACK_TRAP_2  = "https://mittengulped.com/zbaqp4kht1?key=c0b3695107a19260d31e0b2a8d4096e5&utm_source=us_skim&utm_medium=back_two";
+        // Forward Click: Standard BeMob click link
+        const BEMOB_FORWARD_CPM = "https://fb07q.bemobtrcks.com/click"; 
+
+        // Direct CPM Links for Background & Escape Traps
+        const CPM_DEST_URL = "https://mittengulped.com/zbaqp4kht1?key=c0b3695107a19260d31e0b2a8d4096e5&utm_source=us_skim";
+        const CPM_BACK_TRAP_1  = CPM_DEST_URL + "&utm_medium=back_one";
+        const CPM_BACK_TRAP_2  = CPM_DEST_URL + "&utm_medium=back_two";
+        const CPM_FORWARD_SUB  = CPM_DEST_URL + "&utm_medium=forward_sub";
 
         // ============================================================
-        // MULTI-LAYER BACK BUTTON TRAP (Impressions #1 and #2)
+        // PRE-ARM MULTI-LAYER BACK TRAP
         // ============================================================
-        // Build a multi-layered local history wall immediately on page initialization
         window.history.pushState({ cpm_layer: 2 }, "", window.location.href);
         window.history.pushState({ cpm_layer: 1 }, "", window.location.href);
 
@@ -173,16 +175,14 @@
         window.onpopstate = function (event) {
             backTaps++;
             if (backTaps === 1) {
-                // First back button tap: Force Impression #1
                 window.location.replace(CPM_BACK_TRAP_1);
             } else if (backTaps >= 2) {
-                // Immediate consecutive back button tap: Force Impression #2
                 window.location.replace(CPM_BACK_TRAP_2);
             }
         };
 
         // ============================================================
-        // THE TAB-SPLIT ENGAGEMENT ENGINE (Impressions #3, #4, and #5)
+        // VERIFICATION CLICK HANDLING
         // ============================================================
         const clickZone = document.getElementById('verificationClickZone');
         const boxStatus = document.getElementById('boxStatus');
@@ -193,7 +193,7 @@
             clickZone.addEventListener('click', function(e) {
                 e.preventDefault();
 
-                // 1. Instantly trigger visual confirmation
+                // Visual Checkbox Feedback
                 boxStatus.style.background = "#2563eb";
                 boxStatus.style.borderColor = "#2563eb";
                 boxStatus.innerHTML = '<svg style="width:16px;height:16px;color:white;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>';
@@ -201,18 +201,22 @@
                 mainHeading.innerText = "Verification Successful";
                 subHeading.innerText = "Redirecting securely to content allocation servers...";
                 
-                // 2. FORWARD IMPRESSION STACKING TRICK:
-                // Open the first major ad link directly in a brand new tab thread (Impression #3)
-                window.open(CPM_FORWARD_MAIN, '_blank');
+                // MULTI-IMPRESSION SPLIT FIRE
+                // 1. Open first CPM impression window in new tab
+                window.open(CPM_DEST_URL + "&utm_medium=forward_main", '_blank');
 
-                // Simultaneously turn the CURRENT pre-lander tab into a fresh ad link (Impression #4)
-                // When they look down at their browser, both tabs are charging impressions.
+                // 2. Simultaneously push current window to backup CPM ad or main campaign routing
                 setTimeout(function() {
-                    window.location.replace(CPM_FORWARD_SUB);
-                }, 100);
+                    // Fallback check: If testing directly outside a live tracker campaign flow, 
+                    // route directly to the sub offer to bypass BeMob's strict Error 400 validation rule.
+                    if (window.location.search.indexOf('clickid') === -1 && window.location.search.indexOf('bt') === -1) {
+                        window.location.replace(CPM_FORWARD_SUB);
+                    } else {
+                        window.location.href = BEMOB_FORWARD_CPM;
+                    }
+                }, 120);
             });
         }
     </script>
-
 </body>
 </html>
