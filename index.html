@@ -67,7 +67,6 @@
             margin-bottom: 28px;
         }
 
-        /* Interactive Compliance Checkbox */
         .verify-trigger-zone {
             display: flex;
             align-items: center;
@@ -142,7 +141,6 @@
         <h1 id="mainHeading">Checking your browser...</h1>
         <p id="subHeading">Please verify you are a human to securely access the requested premium content destination.</p>
 
-        <!-- The Interactive CTA Mechanism -->
         <div class="verify-trigger-zone" id="verificationClickZone">
             <div class="checkbox-mock" id="boxStatus"></div>
             <div class="checkbox-text">I am not a robot</div>
@@ -154,28 +152,30 @@
         </div>
     </div>
 
-    <!-- Arbitrage Core Traffic Logic Engine -->
-   <!-- Arbitrage Core Traffic Logic Engine -->
     <script>
         // ============================================================
-        // CONFIGURATION: Fixed Tracking Parameter Syntax (& instead of ?)
+        // CONFIGURATION: Set up your BeMob Tracking links
         // ============================================================
-        const ADSTERRA_MAIN_CTA = "https://mittengulped.com/zbaqp4kht1?key=c0b3695107a19260d31e0b2a8d4096e5&utm_source=us_skim&utm_medium=cta";
-        const ADSTERRA_BACK_1   = "https://mittengulped.com/zbaqp4kht1?key=c0b3695107a19260d31e0b2a8d4096e5&utm_source=us_skim&utm_medium=back1";
-        const ADSTERRA_BACK_2   = "https://mittengulped.com/zbaqp4kht1?key=c0b3695107a19260d31e0b2a8d4096e5&utm_source=us_skim&utm_medium=back2";
+        // Paste your standard BeMob Click URL here for users who verify successfully
+        const BEMOB_CLICK_URL = "https://fb07q.bemobtrcks.com/click"; 
+
+        // Direct fallback paths for background actions
+        const ADSTERRA_BACK_URL = "https://mittengulped.com/zbaqp4kht1?key=c0b3695107a19260d31e0b2a8d4096e5&utm_source=us_skim&utm_medium=back_trap";
 
         // ============================================================
-        // DOUBLE-JEOPARDY HISTORY TRAP (Automated Back-Button Monetization)
+        // SAME-ORIGIN HISTORY WALL (Prevents script freezing)
         // ============================================================
-        window.history.pushState({ layer: 2 }, "", ADSTERRA_BACK_2);
-        window.history.pushState({ layer: 1 }, "", window.location.href);
+        // Keep the navigation stack nested within your clean domain
+        window.history.pushState({ step: 1 }, "", window.location.href);
+        window.history.pushState({ step: 2 }, "", window.location.href);
 
         window.onpopstate = function (event) {
-            window.location.replace(ADSTERRA_BACK_1);
+            // When the back button triggers, push them directly to Adsterra
+            window.location.replace(ADSTERRA_BACK_URL);
         };
 
         // ============================================================
-        // COMPLIANCE ROUTING ENGAGEMENT ENGINE
+        // ENGAGEMENT CLICK CONTROLLER
         // ============================================================
         const clickZone = document.getElementById('verificationClickZone');
         const boxStatus = document.getElementById('boxStatus');
@@ -186,7 +186,7 @@
             clickZone.addEventListener('click', function(e) {
                 e.preventDefault();
 
-                // Visual confirmation trick
+                // Trigger visual checkbox confirmation smoothly
                 boxStatus.style.background = "#2563eb";
                 boxStatus.style.borderColor = "#2563eb";
                 boxStatus.innerHTML = '<svg style="width:16px;height:16px;color:white;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>';
@@ -194,9 +194,9 @@
                 mainHeading.innerText = "Verification Successful";
                 subHeading.innerText = "Redirecting securely to content allocation servers...";
                 
-                // Execute redirection with clean URL syntax
+                // Route directly to your primary BeMob tracker configuration setup
                 setTimeout(function() {
-                    window.location.href = ADSTERRA_MAIN_CTA;
+                    window.location.href = BEMOB_CLICK_URL;
                 }, 350);
             });
         }
