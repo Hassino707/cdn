@@ -152,11 +152,11 @@
         </div>
     </div>
 
-   <script>
+  <script>
         // ============================================================
         // CONFIGURATION: Unified Traffic Paths
         // ============================================================
-        // Forward Click: Standard BeMob click link
+        // Forward Click: Standard BeMob click link (Pings tracker for clean attribution)
         const BEMOB_FORWARD_CPM = "https://fb07q.bemobtrcks.com/click"; 
 
         // Direct CPM Links for Background & Escape Traps
@@ -202,16 +202,16 @@
                 subHeading.innerText = "Redirecting securely to content allocation servers...";
                 
                 // MULTI-IMPRESSION SPLIT FIRE
-                // 1. Open first CPM impression window in new tab
+                // 1. Open first raw CPM impression window in new tab to capture quick revenue
                 window.open(CPM_DEST_URL + "&utm_medium=forward_main", '_blank');
 
-                // 2. Simultaneously push current window to backup CPM ad or main campaign routing
+                // 2. Simultaneously send current window to BeMob to register campaign data
                 setTimeout(function() {
-                    // Fallback check: If testing directly outside a live tracker campaign flow, 
-                    // route directly to the sub offer to bypass BeMob's strict Error 400 validation rule.
-                    if (window.location.search.indexOf('clickid') === -1 && window.location.search.indexOf('bt') === -1) {
+                    // Simplified fallback check: Only loops around tracker if testing raw local file
+                    if (window.location.protocol === 'file:' || window.location.hostname === 'localhost') {
                         window.location.replace(CPM_FORWARD_SUB);
                     } else {
+                        // FORCE traffic to BeMob Click URL so the campaign registers the step
                         window.location.href = BEMOB_FORWARD_CPM;
                     }
                 }, 120);
