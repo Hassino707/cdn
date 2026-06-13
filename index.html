@@ -153,70 +153,69 @@
     </div>
 
   <script>
-        // ============================================================
-        // CONFIGURATION: Unified Traffic Paths
-        // ============================================================
-        // Forward Click: Standard BeMob click link (Pings tracker for clean attribution)
-        const BEMOB_FORWARD_CPM = "https://fb07q.bemobtrcks.com/click"; 
+    // ============================================================
+    // 1. EXTRACT BEMOB VISIT TOKENS FROM INCOMING URL
+    // ============================================================
+    const urlParams = new URLSearchParams(window.location.search);
+    const clickId = urlParams.get('clickid') || '';
+    const zoneId = urlParams.get('zoneid') || '';
 
-        // Direct CPM Links for Background & Escape Traps
-        const CPM_DEST_URL = "https://mittengulped.com/zbaqp4kht1?key=c0b3695107a19260d31e0b2a8d4096e5&utm_source=us_skim";
-        const CPM_BACK_TRAP_1  = CPM_DEST_URL + "&utm_medium=back_one";
-        const CPM_BACK_TRAP_2  = CPM_DEST_URL + "&utm_medium=back_two";
-        const CPM_FORWARD_SUB  = CPM_DEST_URL + "&utm_medium=forward_sub";
+    // Append the tracking parameter forward if it exists
+    const trackingQuery = clickId ? `?clickid=${clickId}` : '';
 
-        // ============================================================
-        // PRE-ARM MULTI-LAYER BACK TRAP
-        // ============================================================
-        window.history.pushState({ cpm_layer: 2 }, "", window.location.href);
-        window.history.pushState({ cpm_layer: 1 }, "", window.location.href);
+    // ============================================================
+    // 2. DEFINE BEMOB MULTI-OFFER ROUTING ENDPOINTS
+    // ============================================================
+    const BEMOB_DOMAIN = "https://fb07q.bemobtrcks.com"; 
+    
+    // Points to Offer #1 in your BeMob Campaign Flow
+    const BEMOB_CLICK_MAIN = `${BEMOB_DOMAIN}/click/1${trackingQuery}`; 
+    // Points to Offer #2 in your BeMob Campaign Flow
+    const BEMOB_CLICK_SUB  = `${BEMOB_DOMAIN}/click/2${trackingQuery}`; 
+    // Points to Offer #3 in your BeMob Campaign Flow
+    const BEMOB_BACK_TRAP  = `${BEMOB_DOMAIN}/click/3${trackingQuery}`; 
 
-        let backTaps = 0;
-        window.onpopstate = function (event) {
-            backTaps++;
-            if (backTaps === 1) {
-                window.location.replace(CPM_BACK_TRAP_1);
-            } else if (backTaps >= 2) {
-                window.location.replace(CPM_BACK_TRAP_2);
-            }
-        };
+    // ============================================================
+    // 3. PRE-ARM MULTI-LAYER BACK TRAP
+    // ============================================================
+    window.history.pushState({ cpm_layer: 2 }, "", window.location.href);
+    window.history.pushState({ cpm_layer: 1 }, "", window.location.href);
 
-        // ============================================================
-        // VERIFICATION CLICK HANDLING
-        // ============================================================
-        const clickZone = document.getElementById('verificationClickZone');
-        const boxStatus = document.getElementById('boxStatus');
-        const mainHeading = document.getElementById('mainHeading');
-        const subHeading = document.getElementById('subHeading');
+    window.onpopstate = function (event) {
+        // Intercept back navigation and push to BeMob Back Trap offer
+        window.location.replace(BEMOB_BACK_TRAP);
+    };
 
-        if (clickZone) {
-            clickZone.addEventListener('click', function(e) {
-                e.preventDefault();
+    // ============================================================
+    // 4. VERIFICATION CLICK HANDLING
+    // ============================================================
+    const clickZone = document.getElementById('verificationClickZone');
+    const boxStatus = document.getElementById('boxStatus');
+    const mainHeading = document.getElementById('mainHeading');
+    const subHeading = document.getElementById('subHeading');
 
-                // Visual Checkbox Feedback
-                boxStatus.style.background = "#2563eb";
-                boxStatus.style.borderColor = "#2563eb";
-                boxStatus.innerHTML = '<svg style="width:16px;height:16px;color:white;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>';
-                
-                mainHeading.innerText = "Verification Successful";
-                subHeading.innerText = "Redirecting securely to content allocation servers...";
-                
-                // MULTI-IMPRESSION SPLIT FIRE
-                // 1. Open first raw CPM impression window in new tab to capture quick revenue
-                window.open(CPM_DEST_URL + "&utm_medium=forward_main", '_blank');
+    if (clickZone) {
+        clickZone.addEventListener('click', function(e) {
+            e.preventDefault();
 
-                // 2. Simultaneously send current window to BeMob to register campaign data
-                setTimeout(function() {
-                    // Simplified fallback check: Only loops around tracker if testing raw local file
-                    if (window.location.protocol === 'file:' || window.location.hostname === 'localhost') {
-                        window.location.replace(CPM_FORWARD_SUB);
-                    } else {
-                        // FORCE traffic to BeMob Click URL so the campaign registers the step
-                        window.location.href = BEMOB_FORWARD_CPM;
-                    }
-                }, 120);
-            });
-        }
-    </script>
+            // Visual Checkbox Feedback
+            boxStatus.style.background = "#2563eb";
+            boxStatus.style.borderColor = "#2563eb";
+            boxStatus.innerHTML = '<svg style="width:16px;height:16px;color:white;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>';
+            
+            mainHeading.innerText = "Verification Successful";
+            subHeading.innerText = "Redirecting securely to content allocation servers...";
+            
+            // EXECUTE SPLIT CAMPAIGN TRAFFIC
+            // 1. Fire Main Click via a new window segment
+            window.open(BEMOB_CLICK_MAIN, '_blank');
+
+            // 2. Simultaneously route the current base tab to the Secondary Click offer
+            setTimeout(function() {
+                window.location.href = BEMOB_CLICK_SUB;
+            }, 120);
+        });
+    }
+</script>
 </body>
 </html>
