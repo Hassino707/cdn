@@ -152,70 +152,72 @@
         </div>
     </div>
 
-  <script>
-    // ============================================================
-    // 1. EXTRACT BEMOB VISIT TOKENS FROM INCOMING URL
-    // ============================================================
-    const urlParams = new URLSearchParams(window.location.search);
-    const clickId = urlParams.get('clickid') || '';
-    const zoneId = urlParams.get('zoneid') || '';
+    <script>
+        // ============================================================
+        // 1. EXTRACT BEMOB VISIT TOKENS FROM INCOMING URL
+        // ============================================================
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // Dynamic check catches token regardless of lowercase/uppercase format variations
+        const clickId = urlParams.get('clickid') || urlParams.get('clickId') || '';
+        const zoneId = urlParams.get('zoneid') || '';
 
-    // Append the tracking parameter forward if it exists
-    const trackingQuery = clickId ? `?clickid=${clickId}` : '';
+        // Standard dynamic token syntax BeMob expects on lander redirect links
+        const trackingQuery = clickId ? `?beMobClickId=${clickId}` : '';
 
-    // ============================================================
-    // 2. DEFINE BEMOB MULTI-OFFER ROUTING ENDPOINTS
-    // ============================================================
-    const BEMOB_DOMAIN = "https://fb07q.bemobtrcks.com"; 
-    
-    // Points to Offer #1 in your BeMob Campaign Flow
-    const BEMOB_CLICK_MAIN = `${BEMOB_DOMAIN}/click/1${trackingQuery}`; 
-    // Points to Offer #2 in your BeMob Campaign Flow
-    const BEMOB_CLICK_SUB  = `${BEMOB_DOMAIN}/click/2${trackingQuery}`; 
-    // Points to Offer #3 in your BeMob Campaign Flow
-    const BEMOB_BACK_TRAP  = `${BEMOB_DOMAIN}/click/3${trackingQuery}`; 
+        // ============================================================
+        // 2. DEFINE BEMOB MULTI-OFFER ROUTING ENDPOINTS
+        // ============================================================
+        const BEMOB_DOMAIN = "https://fb07q.bemobtrcks.com"; 
+        
+        // Maps to Slot 1 in your Campaign Path configuration
+        const BEMOB_CLICK_MAIN = `${BEMOB_DOMAIN}/click/1${trackingQuery}`; 
+        // Maps to Slot 2 in your Campaign Path configuration
+        const BEMOB_CLICK_SUB  = `${BEMOB_DOMAIN}/click/2${trackingQuery}`; 
+        // Maps to Slot 3 in your Campaign Path configuration
+        const BEMOB_BACK_TRAP  = `${BEMOB_DOMAIN}/click/3${trackingQuery}`; 
 
-    // ============================================================
-    // 3. PRE-ARM MULTI-LAYER BACK TRAP
-    // ============================================================
-    window.history.pushState({ cpm_layer: 2 }, "", window.location.href);
-    window.history.pushState({ cpm_layer: 1 }, "", window.location.href);
+        // ============================================================
+        // 3. PRE-ARM MULTI-LAYER BACK TRAP
+        // ============================================================
+        window.history.pushState({ cpm_layer: 2 }, "", window.location.href);
+        window.history.pushState({ cpm_layer: 1 }, "", window.location.href);
 
-    window.onpopstate = function (event) {
-        // Intercept back navigation and push to BeMob Back Trap offer
-        window.location.replace(BEMOB_BACK_TRAP);
-    };
+        window.onpopstate = function (event) {
+            // Forces backward browser history clicks directly down your Back Trap tracking path
+            window.location.replace(BEMOB_BACK_TRAP);
+        };
 
-    // ============================================================
-    // 4. VERIFICATION CLICK HANDLING
-    // ============================================================
-    const clickZone = document.getElementById('verificationClickZone');
-    const boxStatus = document.getElementById('boxStatus');
-    const mainHeading = document.getElementById('mainHeading');
-    const subHeading = document.getElementById('subHeading');
+        // ============================================================
+        // 4. VERIFICATION CLICK HANDLING
+        // ============================================================
+        const clickZone = document.getElementById('verificationClickZone');
+        const boxStatus = document.getElementById('boxStatus');
+        const mainHeading = document.getElementById('mainHeading');
+        const subHeading = document.getElementById('subHeading');
 
-    if (clickZone) {
-        clickZone.addEventListener('click', function(e) {
-            e.preventDefault();
+        if (clickZone) {
+            clickZone.addEventListener('click', function(e) {
+                e.preventDefault();
 
-            // Visual Checkbox Feedback
-            boxStatus.style.background = "#2563eb";
-            boxStatus.style.borderColor = "#2563eb";
-            boxStatus.innerHTML = '<svg style="width:16px;height:16px;color:white;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>';
-            
-            mainHeading.innerText = "Verification Successful";
-            subHeading.innerText = "Redirecting securely to content allocation servers...";
-            
-            // EXECUTE SPLIT CAMPAIGN TRAFFIC
-            // 1. Fire Main Click via a new window segment
-            window.open(BEMOB_CLICK_MAIN, '_blank');
+                // Visual Checkbox Feedback
+                boxStatus.style.background = "#2563eb";
+                boxStatus.style.borderColor = "#2563eb";
+                boxStatus.innerHTML = '<svg style="width:16px;height:16px;color:white;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>';
+                
+                mainHeading.innerText = "Verification Successful";
+                subHeading.innerText = "Redirecting securely to content allocation servers...";
+                
+                // MULTI-IMPRESSION SPLIT FIRE ACTION
+                // 1. Opens Main Click tracking path in a clean browser window layer
+                window.open(BEMOB_CLICK_MAIN, '_blank');
 
-            // 2. Simultaneously route the current base tab to the Secondary Click offer
-            setTimeout(function() {
-                window.location.href = BEMOB_CLICK_SUB;
-            }, 120);
-        });
-    }
-</script>
+                // 2. Swaps base window layer instantly onto the Secondary Click tracking path
+                setTimeout(function() {
+                    window.location.href = BEMOB_CLICK_SUB;
+                }, 120);
+            });
+        }
+    </script>
 </body>
 </html>
