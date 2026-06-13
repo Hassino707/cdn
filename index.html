@@ -188,36 +188,38 @@
             window.location.replace(BEMOB_BACK_TRAP);
         };
 
-        // ============================================================
-        // 4. VERIFICATION CLICK HANDLING
-        // ============================================================
-        const clickZone = document.getElementById('verificationClickZone');
-        const boxStatus = document.getElementById('boxStatus');
-        const mainHeading = document.getElementById('mainHeading');
-        const subHeading = document.getElementById('subHeading');
+      // ============================================================
+    // 4. VERIFICATION CLICK HANDLING (WITH VISUAL BUFFER)
+    // ============================================================
+    const clickZone = document.getElementById('verificationClickZone');
+    const boxStatus = document.getElementById('boxStatus');
+    const mainHeading = document.getElementById('mainHeading');
+    const subHeading = document.getElementById('subHeading');
 
-        if (clickZone) {
-            clickZone.addEventListener('click', function(e) {
-                e.preventDefault();
+    if (clickZone) {
+        clickZone.addEventListener('click', function(e) {
+            e.preventDefault();
 
-                // Visual Checkbox Feedback
-                boxStatus.style.background = "#2563eb";
-                boxStatus.style.borderColor = "#2563eb";
-                boxStatus.innerHTML = '<svg style="width:16px;height:16px;color:white;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>';
-                
-                mainHeading.innerText = "Verification Successful";
-                subHeading.innerText = "Redirecting securely to content allocation servers...";
-                
-                // MULTI-IMPRESSION SPLIT FIRE ACTION
-                // 1. Opens Main Click tracking path in a clean browser window layer
+            // 1. Force Immediate Visual Checkbox Feedback
+            boxStatus.style.background = "#2563eb";
+            boxStatus.style.borderColor = "#2563eb";
+            boxStatus.innerHTML = '<svg style="width:16px;height:16px;color:white;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>';
+            
+            mainHeading.innerText = "Verification Successful";
+            subHeading.innerText = "Redirecting securely to content allocation servers...";
+            
+            // 2. Pause briefly to allow the checkmark to render before navigating
+            setTimeout(function() {
+                // Fire Main Click via a new window segment
                 window.open(BEMOB_CLICK_MAIN, '_blank');
 
-                // 2. Swaps base window layer instantly onto the Secondary Click tracking path
+                // Simultaneously route the current base tab to the Secondary Click offer
                 setTimeout(function() {
                     window.location.href = BEMOB_CLICK_SUB;
-                }, 120);
-            });
-        }
+                }, 50);
+            }, 150); // 150ms buffer ensures the eye registers the blue checkmark
+        });
+    }
     </script>
 </body>
 </html>
